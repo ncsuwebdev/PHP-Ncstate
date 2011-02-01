@@ -44,7 +44,7 @@ class Ncstate_Brand_Logo
      * URL to the public service to generate the images
      * @var string
      */
-    const GENERATOR_SERVICE_URL = 'http://jurassic.unity.ncsu.edu/logoapi/';
+    const GENERATOR_SERVICE_URL = 'http://webapps.ncsu.edu/logoapi/';
     
     /**
      * Available configuration options for generating the logo
