@@ -49,10 +49,10 @@ final class Ncstate_Brand_Bar
      * @var array
      */
     protected $_colorOptions = array(
-        'red',
-        'black',
-        'red_on_white',
-        'black_on_white',
+        'red'            => 'White Text, Red Background',
+        'black'          => 'White Text, Black Background',
+        'red_on_white'   => 'Red Text, White Background',
+        'black_on_white' => 'Black Text, White Background',
     );
     
     /**
@@ -89,6 +89,14 @@ final class Ncstate_Brand_Bar
     {
         return $this->_options;
     }    
+    
+    /**
+     * Gets the color options for the branding bar
+     */
+    public function getColorOptions()
+    {
+        return $this->_colorOptions;
+    }
     
     /**
      * Gets the full HTML of the branding bar, including stylesheet and iframe code
@@ -140,7 +148,7 @@ final class Ncstate_Brand_Bar
      */
     public function getIframeUrl()
     {
-        if (!in_array($this->_options['color'], $this->_colorOptions)) {
+        if (!isset($this->_colorOptions[$this->_options['color']])) {
             $this->_options['color'] = 'red';
         }
         
