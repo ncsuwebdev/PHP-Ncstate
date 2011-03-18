@@ -17,9 +17,6 @@ require_once 'Ncstate/Brand/Color.php';
  * Service class to reliably generate on-brand logos that typically
  * live at the top of web pages at NC State University.
  * 
- * Logos have 2 distinct textual representations, where the first
- * part of the text is bold and the second is normal weight.
- * 
  * The class has the ability to use a public service provided by OIT
  * to create the image logo using the correct Universe font.  The font
  * is licensed per user and not distributed with this release, although
@@ -29,16 +26,10 @@ require_once 'Ncstate/Brand/Color.php';
 class Ncstate_Brand_Logo
 {   
     /**
-     * First part of the textual logo which is bold
+     * Default text for the logo
      * @var string
      */
-    protected $_boldText = 'NC STATE ';
-    
-    /**
-     * Second part of the textual logo which is normal weight
-     * @var string
-     */
-    protected $_normalText = 'UNIVERSITY';
+    protected $_text = '*NC STATE* UNIVERSITY';
     
     /**
      * URL to the public service to generate the images
@@ -47,24 +38,34 @@ class Ncstate_Brand_Logo
     const GENERATOR_SERVICE_URL = 'http://webapps.ncsu.edu/logoapi/';
     
     /**
+     * Factor at which to oversample the image.  This is for 
+     * kerning issues found with dealing with smaller font sizes
+     * and restricted image sizes.
+     * 
+     * @var integer
+     */
+    const OVERSAMPLE_FACTOR = 5;
+    
+    /**
      * Available configuration options for generating the logo
      * 
      * @var array
      */
     protected $_options = array(
-        'width'           => '470',            // width of the image
-        'height'          => '60',             // height of the image
-        'leftTextOffset'  => '10',             // distance from left border to indent the text
-        'backgroundColor' => 'primary-red',    // brand-approved key for background color of the image
-        'fontSize'        => '36',             // font size (in points) of the text
-        'fontColor'       => 'primary-white',  // brand-approved font color for the text
-        'verticalAlign'   => 'center',         // position vertically within the image height of the text
-        'transparent'     => false,            // boolean operation for making the background transparent
-        'pathToFonts'     => '',               // absolute path to the font files which 
-        'normalFont'      => 'UVC_____.ttf',   // font used to write the normal weight text
-        'boldFont'        => 'UVCB____.ttf',   // font used to write the bold text
-        'imageType'       => 'png',            // image format to save the image, can be png, gif, or jpeg
-        'savePath'        => null,             // path to save the image to
+        'width'              => '470',            // width of the image
+        'height'             => '60',             // height of the image
+        'leftTextOffset'     => '10',             // distance from left border to place the text
+        'baselineTextOffset' => '10',              // distance from bottom border to place the text
+        'lineSpacing'        => '10',             // Spacing between multiple lines, if applicable
+        'backgroundColor'    => 'primary-red',    // brand-approved key for background color of the image
+        'fontSize'           => '36',             // font size (in points) of the text
+        'fontColor'          => 'primary-white',  // brand-approved font color for the text
+        'transparent'        => false,            // boolean operation for making the background transparent
+        'pathToFonts'        => '',               // absolute path to the font files which 
+        'normalFont'         => 'UVC_____.ttf',   // font used to write the normal weight text (Univers Condensed 57)
+        'boldFont'           => 'UVCB____.ttf',   // font used to write the bold text (Univers Bold Condensed 67)
+        'imageType'          => 'png',            // image format to save the image, can be png, gif, or jpeg
+        'savePath'           => null,             // path to save the image to
     );
     
     /**
@@ -74,65 +75,37 @@ class Ncstate_Brand_Logo
      * @param array $options - array of options
      */
     public function __construct(
-        $boldText = null,
-        $normalText = null, 
+        $text = null, 
         array $options = array())
     {
-        if (!is_null($boldText)) {
-            $this->setBoldText($boldText);
-        }
-        
-        if (!is_null($normalText)) {
-            $this->setNormalText($normalText);
+        if (!is_null($text)) {
+            $this->setText($text);
         }
         
         $this->setOptions($options);
     }
     
     /**
-     * Sets a value for the bold text
+     * Sets a value for the text
      * 
      * @param string $text
      * @return object for fluent interface
      */
-    public function setBoldText($text)
+    public function setText($text)
     {
-        $this->_boldText = strtoupper($text);
-        
-        return $this;
-    }
-    
-    /**
-     * Gets the value for the bold text
-     * 
-     * @return string
-     */
-    public function getBoldText()
-    {
-        return $this->_boldText;
-    }
-    
-    /**
-     * Sets a value for the normal weight text
-     * 
-     * @param string $text
-     * @return object for fluent interface
-     */
-    public function setNormalText($text)
-    {
-        $this->_normalText = strtoupper($text);
+        $this->_text = $text;
         
         return $this;
     }
 
     /**
-     * Gets the value for the normal weight text
+     * Gets the value for the text
      * 
      * @return string
      */
-    public function getNormalText()
+    public function getText()
     {
-        return $this->_normalText;
+        return $this->_text;
     }
     
     /**
@@ -175,8 +148,7 @@ class Ncstate_Brand_Logo
         $queryArgs = array_merge(
             $this->getOptions(),
             array(
-            	'normalText' => $this->getNormalText(),
-            	'boldText'   => $this->getBoldText(),
+            	'text' => $this->getText(),
             )
         );
         
@@ -212,7 +184,7 @@ class Ncstate_Brand_Logo
     public function createImage()
     {
         // set up base image, and colors to be used in the image (black not used for this page, but left for reference later)
-        $im = imagecreatetruecolor($this->_options['width'], $this->_options['height']);
+        $im = imagecreatetruecolor($this->_options['width'] * self::OVERSAMPLE_FACTOR, $this->_options['height'] * self::OVERSAMPLE_FACTOR);
         
         $brandColor = new Ncstate_Brand_Color();
         
@@ -235,53 +207,68 @@ class Ncstate_Brand_Logo
        
         
         // Set the background to be red (the base color of the header region where this will be placed)
-        imagefilledrectangle($im, 0, 0, $this->_options['width'], $this->_options['height'], $backgroundColor);
+        imagefilledrectangle($im, 0, 0, $this->_options['width'] * self::OVERSAMPLE_FACTOR, $this->_options['height'] * self::OVERSAMPLE_FACTOR, $backgroundColor);
         
         // Path to our font files
         $normalFont = $this->_options['pathToFonts'] . '/' . $this->_options['normalFont'];
         $boldFont = $this->_options['pathToFonts'] . '/' . $this->_options['boldFont'];
+
+        // Calculate a line height for multi-line images
+        $oneLine = imagettfbbox($this->_options['fontSize'] * self::OVERSAMPLE_FACTOR, 0, $normalFont, 'A');
+        $oneLineHeight = $oneLine[1] - $oneLine[7];
         
-        // First we create our bounding box for the first text
-        $boldBox = imagettfbbox($this->_options['fontSize'], 0, $boldFont, $this->getBoldText());
+        $posX = $this->_options['leftTextOffset'] * self::OVERSAMPLE_FACTOR;
+        $posY = ($this->_options['height'] * self::OVERSAMPLE_FACTOR) - ($this->_options['baselineTextOffset'] * self::OVERSAMPLE_FACTOR);
         
-        $boxHeight = $boldBox[1] - $boldBox[7];
-        $verticalPosition = 0;
+        $lines = array();
         
-        // figure out vertical positioning based on the bounding box and image height
-        switch ($this->_options['verticalAlign']) {
-            case 'top':
-                $verticalPosition = $boxHeight;
-                break;
-            case 'center':
-                $verticalPosition = ceil(($this->_options['height'] + $boxHeight) / 2); 
-                break;
-            case 'bottom':
-            default:
-                $verticalPosition = $this->_options['height'];
-                break;
-        }        
-        
-        // This is our cordinates for X and Y for the bold text
-        $boldX = $boldBox[0] + $this->_options['leftTextOffset']; // bottom left corner of the box
-        
-        // Write it
-        imagettftext($im, $this->_options['fontSize'], 0, $boldX, $verticalPosition, $fontColor, $boldFont, $this->getBoldText());
-        
-        // Create the next bounding box for the second text
-        $regbox = imagettfbbox($this->_options['fontSize'], 0, $normalFont, $this->getNormalText());
-        
-        // Set the cordinates so its next to the first text
-        $normalX = $boldBox[4] + $this->_options['leftTextOffset']; // top right of bold text
-        
-        // Write it
-        imagettftext($im, $this->_options['fontSize'], 0, $normalX, $verticalPosition, $fontColor, $normalFont, $this->getNormalText());
-        
-        // uncomment this line to make the image have a transparent background (it leaves some artifacts around the text, so it might be easier to just set the background color like we did with $red)
-        if ((bool)$this->_options['transparent']) {
-            imagecolortransparent ($im, $backgroundColor);
+        // Parse the string by newline chars
+        $parsed = explode("\n", $this->getText());
+        foreach ($parsed as $p) {
+            if ($p == '') {
+                continue;
+            }
+            
+            // split up bold parts versus non-bold parts
+            $parts = preg_split('/(\*[^*]*\*)|(\n)/', $p, -1, PREG_SPLIT_DELIM_CAPTURE);       
+
+            $lines[] = $parts;
         }
         
-        return $this->_store($im);
+        // Reverse the lines so that we write them the correct offset from the baseline
+        $lines = array_reverse($lines);
+                       
+        foreach ($lines as $line) {  
+            foreach ($line as $text) {
+                $count = 0;
+                $font = $normalFont;
+                
+                // Only make the font bold if there are two bold markers on the particle  of text
+                $writable = str_replace('*', '', $text, $count);
+                if ($count == 2) {
+                    $font = $boldFont;
+                }
+                
+                $boundingBox = imagettftext($im, $this->_options['fontSize'] * self::OVERSAMPLE_FACTOR, 0, $posX, $posY, $fontColor, $font, $writable);
+                
+                $posX = $boundingBox[2];
+            }
+            
+            $posX = $this->_options['leftTextOffset'] * self::OVERSAMPLE_FACTOR;
+            $posY -= ($oneLineHeight + ($this->_options['lineSpacing'] * self::OVERSAMPLE_FACTOR));                        
+        }
+        
+        // Sample down the image to the original requested size
+        $final = imageCreateTrueColor($this->_options['width'], $this->_options['height']);
+
+        imageCopyResampled($final, $im, 0, 0, 0, 0, $this->_options['width'], $this->_options['height'], $this->_options['width'] * self::OVERSAMPLE_FACTOR, $this->_options['height'] * self::OVERSAMPLE_FACTOR );        
+        
+        // Option to make the image transparent
+        if ((bool)$this->_options['transparent']) {
+            imagecolortransparent($final, $backgroundColor);
+        }        
+        
+        return $this->_store($final);
     }
     
     /**
