@@ -62,8 +62,8 @@ class Ncstate_Brand_Logo
         'fontColor'          => 'primary-white',  // brand-approved font color for the text
         'transparent'        => false,            // boolean operation for making the background transparent
         'pathToFonts'        => '',               // absolute path to the font files which 
-        'normalFont'         => 'UVC_____.ttf',   // font used to write the normal weight text (Univers Condensed 57)
-        'boldFont'           => 'UVCB____.ttf',   // font used to write the bold text (Univers Bold Condensed 67)
+        'normalFont'         => 'UVC_____.TTF',   // font used to write the normal weight text (Univers Condensed 57)
+        'boldFont'           => 'UVCB____.TTF',   // font used to write the bold text (Univers Bold Condensed 67)
         'imageType'          => 'png',            // image format to save the image, can be png, gif, or jpeg
         'savePath'           => null,             // path to save the image to
     );
