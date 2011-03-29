@@ -14,7 +14,8 @@
 require_once 'Ncstate/Brand/Color.php';
 
 /**
- * Service class to reliably generate on-brand text-based images.
+ * Service class to reliably generate on-brand text-based images that typically
+ * live at the top of web pages at NC State University.
  * 
  * The class has the ability to use a public service provided by OIT
  * to create the image using the correct Universe font.  The font
@@ -28,7 +29,7 @@ class Ncstate_Brand_Text
      * Default text
      * @var string
      */
-    protected $_text = '*NC STATE* UNIVERSITY';
+    protected $_text = '*TEXT* UTILITY';
     
     /**
      * URL to the public service to generate the images
@@ -51,10 +52,10 @@ class Ncstate_Brand_Text
      * @var array
      */
     protected $_options = array(
-        'width'              => '470',            // width of the image
-        'height'             => '60',             // height of the image
-        'leftTextOffset'     => '10',             // distance from left border to place the text
-        'baselineTextOffset' => '10',              // distance from bottom border to place the text
+        'width'              => '275',            // width of the image
+        'height'             => '50',             // height of the image
+        'leftTextOffset'     => '8',              // distance from left border to place the text
+        'baselineTextOffset' => '8',              // distance from bottom border to place the text
         'lineSpacing'        => '10',             // Spacing between multiple lines, if applicable
         'backgroundColor'    => 'primary-red',    // brand-approved key for background color of the image
         'fontSize'           => '36',             // font size (in points) of the text
@@ -269,6 +270,33 @@ class Ncstate_Brand_Text
         
         return $this->_store($final);
     }
+    
+    
+    /**
+     * Checks to see if the text to be placed on the image is
+     * not "NC STATE UNIVERSITY" which should instead be used
+     * as the official brick logo provided at 
+     * http://ncsu.edu/brand
+     * 
+     * @param string $text - Text to check
+     * @return boolean
+     */
+    public function isValidText($text)
+    {
+        $invalid = array(
+            '/NC\s*STATE\s*UNIVERSITY/i'
+        );    
+        
+        $checkText = str_replace('*', '', $text);
+        foreach ($invalid as $i) {
+            if (preg_match($i, $checkText)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     
     /**
      * Decides the storage protocol for the image
