@@ -14,19 +14,18 @@
 require_once 'Ncstate/Brand/Color.php';
 
 /**
- * Service class to reliably generate on-brand logos that typically
- * live at the top of web pages at NC State University.
+ * Service class to reliably generate on-brand text-based images.
  * 
  * The class has the ability to use a public service provided by OIT
- * to create the image logo using the correct Universe font.  The font
+ * to create the image using the correct Universe font.  The font
  * is licensed per user and not distributed with this release, although
  * all the methodology is present in this class to use other fonts.
  * 
  */
-class Ncstate_Brand_Logo
+class Ncstate_Brand_Text
 {   
     /**
-     * Default text for the logo
+     * Default text
      * @var string
      */
     protected $_text = '*NC STATE* UNIVERSITY';
@@ -35,7 +34,7 @@ class Ncstate_Brand_Logo
      * URL to the public service to generate the images
      * @var string
      */
-    const GENERATOR_SERVICE_URL = 'http://webapps.ncsu.edu/logoapi/';
+    const GENERATOR_SERVICE_URL = 'http://webapps.ncsu.edu/textapi/';
     
     /**
      * Factor at which to oversample the image.  This is for 
@@ -47,7 +46,7 @@ class Ncstate_Brand_Logo
     const OVERSAMPLE_FACTOR = 5;
     
     /**
-     * Available configuration options for generating the logo
+     * Available configuration options for generating the image
      * 
      * @var array
      */

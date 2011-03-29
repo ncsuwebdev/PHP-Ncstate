@@ -17,7 +17,7 @@ final class Ncstate_Version
      * Version of the API
      * @var string
      */
-    const VERSION = '1.0.0';
+    const VERSION = '1.0.1';
     
     /**
      * Compare the specified version string $version with the current 
