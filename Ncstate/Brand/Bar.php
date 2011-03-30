@@ -16,19 +16,34 @@
 final class Ncstate_Brand_Bar
 {
     /**
-     * URL to the style sheet
+     * URL to the style sheet (http)
      * 
      * @var string
      */
-    const STYLESHEET_URL = 'http://www.ncsu.edu/brand/utility-bar/iframe/css/utility_bar_iframe.css';
+    const HTTP_STYLESHEET_URL = 'http://www.ncsu.edu/brand/utility-bar/iframe/css/utility_bar_iframe.css';
     
     /**
      * 
-     * Base URL for the Iframe which is injected into the top of the web page
+     * Base URL for the Iframe which is injected into the top of the web page (http)
      * 
      * @var string
      */
-    const IFRAME_URL = 'http://www.ncsu.edu/brand/utility-bar/iframe/index.php';
+    const HTTP_IFRAME_URL = 'http://www.ncsu.edu/brand/utility-bar/iframe/index.php';
+    
+    /**
+     * URL to the style sheet (https)
+     * 
+     * @var string
+     */
+    const HTTPS_STYLESHEET_URL = 'https://ssl.ncsu.edu/brand/utility-bar/iframe/secure/css/utility_bar_iframe.css';
+    
+    /**
+     * 
+     * Base URL for the Iframe which is injected into the top of the web page (https)
+     * 
+     * @var string
+     */
+    const HTTPS_IFRAME_URL = 'https://ssl.ncsu.edu/brand/utility-bar/iframe/secure/index.php';    
     
     /**
      * Options available for configuring the brand bar.
@@ -39,6 +54,7 @@ final class Ncstate_Brand_Bar
         'siteUrl'        => '',     // URL for the website the bar will live on.  Used in google site search.
         'color'          => 'red',  // Option for color combo.  Can be red, black, red_on_white, or black_on_white
         'centered'       => true,   // Boolean value for centering the bar or not
+        'secure'         => false,  // Boolean value for using https or not
         'noIframePrompt' => 'Your browser does not support inline frames or is currently configured  not to display inline frames.<br /> Visit <a href="http://ncsu.edu/">http://www.ncsu.edu</a>.',  // Prompt provided to users who have browsers that don't support iframes
         'iframeId'       => 'ncsu_branding_bar',  // HTML id for the branding bar iframe
     );
@@ -125,7 +141,11 @@ final class Ncstate_Brand_Bar
      */
     public function getStylesheetUrl()
     {
-        return self::STYLESHEET_URL;
+        if ($this->_options['secure']) {
+            return self::HTTPS_STYLESHEET_URL;
+        }
+        
+        return self::HTTP_STYLESHEET_URL;
     }
     
     /**
@@ -156,7 +176,13 @@ final class Ncstate_Brand_Bar
             $this->_options['siteUrl'] = preg_replace('/^http(s)*:\/\//i', '', $this->_options['siteUrl']);
         }
         
-        return self::IFRAME_URL . '?color=' . urlencode($this->_options['color']) 
+        $baseUrl = self::HTTP_IFRAME_URL;
+        
+        if ($this->_options['secure']) {
+            $baseUrl = self::HTTPS_IFRAME_URL;
+        }
+        
+        return $baseUrl . '?color=' . urlencode($this->_options['color']) 
              . '&inurl=' . urlencode($this->_options['siteUrl']) . '&center=' 
              . urlencode((($this->_options['centered']) ? 'yes' : 'no'));
     }

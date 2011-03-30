@@ -33,9 +33,9 @@ final class Ncstate_Brand_Quicklinks
         'Housing'                         => 'http://www.ncsu.edu/campus-life/housing/',
         'Registration & Records'          => 'http://www.ncsu.edu/registrar/',
         'Undergraduate Admissions'        => 'http://www.fis.ncsu.edu/uga/',
-        'Vista Courses'                   => 'http://vista.ncsu.edu/',
+        'Wolfware Classic'                => 'http://courses.ncsu.edu/',
+        'Wolfware Courses'                => 'http://wolfware.ncsu.edu/',
         'Webmail'                         => 'https://webmail.ncsu.edu/',
-        'Wolfware Courses'                => 'http://courses.ncsu.edu/',
     );
     
     /**
