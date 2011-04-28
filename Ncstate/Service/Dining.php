@@ -1,10 +1,9 @@
 <?php
 /**
- * Set of classes to programatically communicate with the NC State University
- * Dining API
+ * Set of classes to programatically communicate with services at NC State 
+ * University
  *
- * @package Ncstate_Dining
- * @see     http://webapps.ncsu.edu/dining
+ * @package Ncstate_Service
  * @author  Office of Information Technology - Outreach Technology
  */
 
@@ -15,6 +14,8 @@
  * The class uses the public Dining API service provided by OIT
  * to get the menus, locations, and hours for the various dining establishments
  * on campus.
+ * 
+ * @see     http://webapps.ncsu.edu/dining
  *
  */
 class Ncstate_Service_Dining
@@ -144,7 +145,7 @@ class Ncstate_Service_Dining
      * @param string $diet Optionally return the menu items that match a specific
      *                      diet ('iron', 'weightGain', 'loseBodyFat', 'calcium', 'vegetarian', 'inactiveDay')
      *
-     * @throws Ncstate_Service_Dining_Exception
+     * @throws Ncstate_Service_Exception
      *
      * @return stdClass object from the request
      *
@@ -156,8 +157,8 @@ class Ncstate_Service_Dining
             $meal = strtolower($meal);
 
             if (!in_array($meal, $this->_validMealTypes)) {
-                require_once 'Ncstate/Service/Dining/Exception.php';
-                throw new Ncstate_Service_Dining_Exception('Meal type must be one of "' . implode(', ', $this->_validMealTypes) . '"');
+                require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('Meal type must be one of "' . implode(', ', $this->_validMealTypes) . '"');
             }
         }
 
@@ -166,8 +167,8 @@ class Ncstate_Service_Dining
             $diet = strtolower($diet);
 
             if (!in_array($diet, $this->_validDietTypes)) {
-                require_once 'Ncstate/Service/Dining/Exception.php';
-                throw new Ncstate_Service_Dining_Exception('Diet type must be one of "' . implode(', ', $this->_validDietTypes) . '"');
+                require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('Diet type must be one of "' . implode(', ', $this->_validDietTypes) . '"');
             }
         }
 
@@ -197,7 +198,7 @@ class Ncstate_Service_Dining
      * @param string $locationKey The key for the location for which to get the menu
      * @param string $date Date in YYYY-M-D format or 'today' or 'tomorrow' (today by default)
      *
-     * @throws Ncstate_Service_Dining_Exception
+     * @throws Ncstate_Service_Exception
      *
      * @return stdClass object from the request
      *
@@ -221,7 +222,7 @@ class Ncstate_Service_Dining
      *
      * @param string $type A valid location type.
      *
-     * @throws Ncstate_Service_Dining_Exception
+     * @throws Ncstate_Service_Exception
      *
      * @return stdClass object from the request
      *
@@ -240,7 +241,7 @@ class Ncstate_Service_Dining
     /**
      * Returns a list of all the location types.
      *
-     * @throws Ncstate_Service_Dining_Exception
+     * @throws Ncstate_Service_Exception
      *
      * @return stdClass object from the request
      *
@@ -258,7 +259,7 @@ class Ncstate_Service_Dining
      * @param string $method The method to call
      * @param array $args key value array of arguments
      *
-     * @throws Ncstate_Service_Dining_Exception
+     * @throws Ncstate_Service_Exception
      *
      * @return stdClass object
      */
@@ -297,8 +298,8 @@ class Ncstate_Service_Dining
         if ($this->_lastRawResponse === false) {
 
             $this->_lastRawResponse = curl_error($ch);
-            require_once 'Ncstate/Service/Dining/Exception.php';
-            throw new Ncstate_Service_Dining_Exception('CURL Error: ' . curl_error($ch));
+            require_once 'Ncstate/Service/Exception.php';
+            throw new Ncstate_Service_Exception('CURL Error: ' . curl_error($ch));
         }
 
         curl_close($ch);
@@ -324,8 +325,8 @@ class Ncstate_Service_Dining
 
         // Server provides error messages in the 'status' field.  It will either be 'success' or 'failure'
         if (strtolower($this->_lastParsedResponse[$method]['status']) == 'failure') {
-            require_once 'Ncstate/Service/Dining/Exception.php';
-            throw new Bn_Service_Brewerydb_Exception('Dining Service Error: ' .
+            require_once 'Ncstate/Service/Exception.php';
+            throw new Ncstate_Service_Exception('Dining Service Error: ' .
                     $this->_lastParsedResponse['response']['message']);
         }
 
