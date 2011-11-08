@@ -8,10 +8,10 @@ class Ncstate_Service_Remedy
     protected $_password = null;
 
     /**
-	 * Stores the soap client
-   	 *
-   	 * @var stdClass
-   	 */
+     * Stores the soap client
+     *
+     * @var stdClass
+     */
     protected $_soapClient = null;
 
     /**
@@ -189,13 +189,13 @@ class Ncstate_Service_Remedy
             'entry_id' => $entryId
         );
 
-		try{
-			$result = $this->_request('calls-attachments', 'get-entry', $args);
-		} catch (Ncstate_Service_Exception $e) {
-			throw $e;
-		}
+        try{
+            $result = $this->_request('calls-attachments', 'get-entry', $args);
+        } catch (Ncstate_Service_Exception $e) {
+            throw $e;
+        }
 
-		return $result;
+        return $result;
     }
 
     /**
@@ -206,9 +206,9 @@ class Ncstate_Service_Remedy
     public function callAttachmentList($callId)
     {
         $args = array(
-            'call_id' 		=> $callId,
-        	'start_record'	=> null,
-        	'max_limit'		=> null,
+            'call_id'         => $callId,
+            'start_record'    => null,
+            'max_limit'        => null,
         );
 
         return $this->_request('calls-attachments', 'get-list-entry', $args);
@@ -258,7 +258,7 @@ class Ncstate_Service_Remedy
             'entry_id' => $entryId,
         );
 
-		return $this->_request('calls-history', 'get-entry', $args);
+        return $this->_request('calls-history', 'get-entry', $args);
     }
 
     /**
@@ -269,9 +269,9 @@ class Ncstate_Service_Remedy
     public function callHistoryList($callId, $max_limit = null, $start_record = null)
     {
         $args = array(
-            'call_id'		=> $callId,
-        	'max_limit' 	=> $max_limit,
-        	'start_record'	=> $start_record,
+            'call_id'        => $callId,
+            'max_limit'     => $max_limit,
+            'start_record'    => $start_record,
         );
 
         return $this->_request('calls-history', 'get-list-entry', $args);
@@ -286,7 +286,7 @@ class Ncstate_Service_Remedy
     {
         $args = array(
             'cid' => $cid,
-        	'login' => null,
+            'login' => null,
         );
 
         return $this->_request('customers', 'get-entry', $args);
@@ -301,7 +301,7 @@ class Ncstate_Service_Remedy
     {
         $args = array(
             'login' => $login,
-        	'cid' => null,
+            'cid' => null,
         );
 
         return $this->_request('customers', 'get-entry', $args);
@@ -315,8 +315,8 @@ class Ncstate_Service_Remedy
     public function workgroupGetByID($workgroupId)
     {
         $args = array(
-            'group_id'	=> $workgroupId,
-        	'group_name'=> null,
+            'group_id'    => $workgroupId,
+            'group_name'=> null,
         );
 
         return $this->_request('workgroups', 'get-entry', $args);
@@ -330,8 +330,8 @@ class Ncstate_Service_Remedy
     public function workgroupGetByName($workgroupName)
     {
         $args = array(
-            'group_name'	=> $workgroupName,
-        	'group_id'		=> null,
+            'group_name'    => $workgroupName,
+            'group_id'        => null,
         );
 
         return $this->_request('workgroups', 'get-entry', $args);
@@ -535,15 +535,15 @@ class Ncstate_Service_Remedy
     }
 
     /**
-   	 * Sends a request using curl to the required URI
-   	 *
-   	 * @param string $method Untappd method to call
-   	 * @param array $args key value array or arguments
-   	 *
-   	 * @throws Awsm_Service_Untappd_Exception
-   	 *
-   	 * @return stdClass object
-   	 */
+     * Sends a request using curl to the required URI
+     *
+     * @param string $method Untappd method to call
+     * @param array $args key value array or arguments
+     *
+     * @throws Awsm_Service_Untappd_Exception
+     *
+     * @return stdClass object
+     */
     protected function _request($wsdlEndpoint, $method, $args)
     {
         $soapArgs = new stdClass();
@@ -577,6 +577,12 @@ class Ncstate_Service_Remedy
         return $result;
     }
 
+    /**
+     * Parses any digest entries returned from ARS server
+     *
+     * @param string $digest
+     * @return Array of stdClass objects
+     */
     protected function _parseDigest($digest)
     {
         $entries = preg_split('/\x{f8e2}/u', $digest);
