@@ -1,10 +1,29 @@
 <?php
+/**
+ * Service class to wrap the newest version of Remedy that is used for
+ * tracking campus support calls.
+ *
+ * @see remedy.ncsu.edu/project
+ */
 class Ncstate_Service_Remedy
 {
-    const URI_BASE = 'https://ars00srv.unity.ncsu.edu/arsys/WSDL/public/ars00srv';
+    /**
+     * API base URL
+     */
+    const URI_BASE = 'https://remedyweb.oit.ncsu.edu/arsys/WSDL/public/ars00srv';
 
+    /**
+     * Remedy Username
+     *
+     * @var string
+     */
     protected $_username = null;
 
+    /**
+     * Remedy Password
+     *
+     * @var string
+     */
     protected $_password = null;
 
     /**
@@ -34,7 +53,7 @@ class Ncstate_Service_Remedy
     public function callGet($callId)
     {
         $args = array(
-            'call_id' => (int)$callId
+            'call_id' => str_pad($callId, 8, '0', STR_PAD_LEFT),
         );
 
         $result = $this->_request('calls', 'get-entry', $args);
@@ -68,11 +87,11 @@ class Ncstate_Service_Remedy
      * @param int $callId
      * @param array $data
      */
-    public function callUpdate($callId, Array $data)
+    public function callUpdate($callId, array $data)
     {
         $defaults = array(
             'action'           => null,     // action
-            'call_id'          => $callId,  // call ID to update
+            'call_id'          => str_pad($callId, 8, '0', STR_PAD_LEFT),  // call ID to update
             'customer_id'      => null,     // customer CID number
             'date_nextcontact' => null,     // date-time field, call next-contact
             'impact'           => null,     // impact
@@ -110,28 +129,28 @@ class Ncstate_Service_Remedy
      *
      * @param array $data
      */
-    public function callCreate(Array $data)
+    public function callCreate(array $data)
     {
         $defaults = array(
             'action'           => null,              // action
             'agent'            => $this->_username,  // required, agent
             'comments'         => null,              // call ID to update
-            'customer-id'      => null,              // customer CID number
-            'date-nextcontact' => null,              // date-time field, call next-contact
+            'customer_id'      => null,              // customer CID number
+            'date_nextcontact' => null,              // date-time field, call next-contact
             'impact'           => null,              // impact
-            'on-site-visit'    => null,              // Yes/No/NULL
+            'on_site_visit'    => null,              // Yes/No/NULL
             'origin'           => null,              // origin
-            'owner-id'         => null,              // owner id number
+            'owner_id'         => null,              // owner id number
             'owner'            => null,              // call owner (Remedy login)
             'priority'         => null,              // priority
-            'problem-text'     => null,              // single diary entry
+            'problem_text'     => null,              // single diary entry
             'problem'          => null,              // problem description
-            'product-id'       => null,              // product id number
+            'product_id'       => null,              // product id number
             'product'          => null,              // product name
-            'solution-id'      => null,              // solution id number
+            'solution_id'      => null,              // solution id number
             'status'           => null,              // status
-            'time-spent'       => null,              // time spent, in seconds
-            'workgroup-id'     => null,              // workgroup id number
+            'time_spent'       => null,              // time spent, in seconds
+            'workgroup_id'     => null,              // workgroup id number
             'workgroup'        => null,              // workgroup name
         );
 
@@ -170,9 +189,9 @@ class Ncstate_Service_Remedy
             throw new Ncstate_Service_Exception('Field for "status" is required and not set');
         }
 
-        if (!isset($args['workgroup-id']) && !isset($args['workgroup'])) {
+        if (!isset($args['workgroup_id']) && !isset($args['workgroup'])) {
             require_once 'Ncstate/Service/Exception.php';
-            throw new Ncstate_Service_Exception('Field for "workgroup" or "workgroup-id" is required and not set');
+            throw new Ncstate_Service_Exception('Field for "workgroup" or "workgroup_id" is required and not set');
         }
 
         return $this->_request('calls', 'create-entry', $args);
@@ -206,9 +225,9 @@ class Ncstate_Service_Remedy
     public function callAttachmentList($callId)
     {
         $args = array(
-            'call_id'         => $callId,
-            'start_record'    => null,
-            'max_limit'        => null,
+            'call_id'      => str_pad($callId, 8, '0', STR_PAD_LEFT),
+            'start_record' => null,
+            'max_limit'    => null,
         );
 
         return $this->_request('calls-attachments', 'get-list-entry', $args);
@@ -218,15 +237,15 @@ class Ncstate_Service_Remedy
      * Create an attachment associated with the specified call-id.
      *
      * @param string $callId
-     * @param Array $data
+     * @param array $data
      */
-    public function callAttachmentCreate($callId, Array $data)
+    public function callAttachmentCreate($callId, array $data)
     {
         $defaults = array(
             'attachment_data' => null,     // required, Base64 encoded attachment
             'attachment_name' => null,     //required, name of the attachment
             'attachment_size' => null,     //required, size of the attachment, in bytes
-            'call_id'         => $callId,  //required, id number of the call that this attachment is to be associated with. Value must be zero-padded on the left to a length of 8 characters
+            'call_id'         => str_pad($callId, 8, '0', STR_PAD_LEFT),  //required, id number of the call that this attachment is to be associated with. Value must be zero-padded on the left to a length of 8 characters
             'type'            => null,     //required, Email / Solution
             'status'          => null,     //required, Received / Outgoing / Sent / Hold / Solution
         );
@@ -269,9 +288,9 @@ class Ncstate_Service_Remedy
     public function callHistoryList($callId, $max_limit = null, $start_record = null)
     {
         $args = array(
-            'call_id'        => $callId,
-            'max_limit'     => $max_limit,
-            'start_record'    => $start_record,
+            'call_id'      => str_pad($callId, 8, '0', STR_PAD_LEFT),
+            'max_limit'    => $max_limit,
+            'start_record' => $start_record,
         );
 
         return $this->_request('calls-history', 'get-list-entry', $args);
@@ -285,7 +304,7 @@ class Ncstate_Service_Remedy
     public function customerGetByCID($cid)
     {
         $args = array(
-            'cid' => $cid,
+            'cid'   => $cid,
             'login' => null,
         );
 
@@ -301,7 +320,7 @@ class Ncstate_Service_Remedy
     {
         $args = array(
             'login' => $login,
-            'cid' => null,
+            'cid'   => null,
         );
 
         return $this->_request('customers', 'get-entry', $args);
@@ -315,8 +334,8 @@ class Ncstate_Service_Remedy
     public function workgroupGetByID($workgroupId)
     {
         $args = array(
-            'group_id'    => $workgroupId,
-            'group_name'=> null,
+            'group_id'   => $workgroupId,
+            'group_name' => null,
         );
 
         return $this->_request('workgroups', 'get-entry', $args);
@@ -330,8 +349,8 @@ class Ncstate_Service_Remedy
     public function workgroupGetByName($workgroupName)
     {
         $args = array(
-            'group_name'    => $workgroupName,
-            'group_id'        => null,
+            'group_name' => $workgroupName,
+            'group_id'   => null,
         );
 
         return $this->_request('workgroups', 'get-entry', $args);
@@ -351,11 +370,11 @@ class Ncstate_Service_Remedy
         );
 
         if (!is_null($startRecord)) {
-            $args['start-record'] = $startRecord;
+            $args['start_record'] = $startRecord;
         }
 
         if (!is_null($maxLimit)) {
-            $args['max-limit'] = $maxLimit;
+            $args['max_limit'] = $maxLimit;
         }
 
         return $this->_request('workgroups', 'get-list-entry', $args);
@@ -414,16 +433,16 @@ class Ncstate_Service_Remedy
     {
         $args = array(
             'qualification' => $qualification,
-            'start_record' => $startRecord,
-            'max_limit' => $maxLimit,
+            'start_record'  => $startRecord,
+            'max_limit'     => $maxLimit,
         );
 
         if (!is_null($startRecord)) {
-            $args['start-record'] = $startRecord;
+            $args['start_record'] = $startRecord;
         }
 
         if (!is_null($maxLimit)) {
-            $args['max-limit'] = $maxLimit;
+            $args['max_limit'] = $maxLimit;
         }
 
         return $this->_request('users', 'get-list-entry', $args);
@@ -435,20 +454,20 @@ class Ncstate_Service_Remedy
      * @param string $userId
      * @param array $data
      */
-    public function userUpdate($userId, Array $data)
+    public function userUpdate($userId, array $data)
     {
         $defaults = array(
             'availability'             => null,     // is the user available/not/retired?
-            'default-notify-mechanism' => null,     // user’s default notify mechanism
-            'email-address'            => null,     // 'users email address for notifications, etc.
-            'email-signature'          => null,     // user’s email sig.
-            'initial-query'            => null,     // query to issue automatically issue at login
-            'pager-address'            => null,     // email address of user’s pager
-            'pager-template'           => null,     // user’s preferred page format template
+            'default_notify_mechanism' => null,     // user’s default notify mechanism
+            'email_address'            => null,     // 'users email address for notifications, etc.
+            'email_signature'          => null,     // user’s email sig.
+            'initial_query'            => null,     // query to issue automatically issue at login
+            'pager_address'            => null,     // email address of user’s pager
+            'pager_template'           => null,     // user’s preferred page format template
             'password'                 => null,     // Remedy login password
-            'products-count'           => null,     // count of products in user’s personal products menu
-            'solutions-count'          => null,     // count of solutions in user’s personal solutions menu
-            'user-id'                  => $userId,  // required, user’s id number
+            'products_count'           => null,     // count of products in user’s personal products menu
+            'solutions_count'          => null,     // count of solutions in user’s personal solutions menu
+            'user_id'                  => $userId,  // required, user’s id number
         );
 
         $args = array();
@@ -461,9 +480,9 @@ class Ncstate_Service_Remedy
             }
         }
 
-        if (!isset($args['user-id'])) {
+        if (!isset($args['user_id'])) {
             require_once 'Ncstate/Service/Exception.php';
-                throw new Ncstate_Service_Exception('Field for "user-id" is required and not set');
+                throw new Ncstate_Service_Exception('Field for "user_id" is required and not set');
         }
 
         return $this->_request('calls', 'update-entry', $args);
@@ -500,11 +519,11 @@ class Ncstate_Service_Remedy
         );
 
         if (!is_null($startRecord)) {
-            $args['startRecord'] = $startRecord;
+            $args['start_record'] = $startRecord;
         }
 
         if (!is_null($maxLimit)) {
-            $args['maxLimit'] = $maxLimit;
+            $args['max_limit'] = $maxLimit;
         }
 
         return $this->_request('solutions', 'get-list-entry', $args);
@@ -524,26 +543,26 @@ class Ncstate_Service_Remedy
         );
 
         if (!is_null($startRecord)) {
-            $args['startRecord'] = $startRecord;
+            $args['start_record'] = $startRecord;
         }
 
         if (!is_null($maxLimit)) {
-            $args['maxLimit'] = $maxLimit;
+            $args['max_limit'] = $maxLimit;
         }
 
         return $this->_request('survey', 'get-list', $args);
     }
 
     /**
-     * Sends a request using curl to the required URI
-     *
-     * @param string $method Untappd method to call
-     * @param array $args key value array or arguments
-     *
-     * @throws Awsm_Service_Untappd_Exception
-     *
-     * @return stdClass object
-     */
+        * Sends a request using curl to the required URI
+        *
+        * @param string $method Untappd method to call
+        * @param array $args key value array or arguments
+        *
+        * @throws Awsm_Service_Untappd_Exception
+        *
+        * @return stdClass object
+        */
     protected function _request($wsdlEndpoint, $method, $args)
     {
         $soapArgs = new stdClass();
@@ -577,12 +596,6 @@ class Ncstate_Service_Remedy
         return $result;
     }
 
-    /**
-     * Parses any digest entries returned from ARS server
-     *
-     * @param string $digest
-     * @return Array of stdClass objects
-     */
     protected function _parseDigest($digest)
     {
         $entries = preg_split('/\x{f8e2}/u', $digest);
