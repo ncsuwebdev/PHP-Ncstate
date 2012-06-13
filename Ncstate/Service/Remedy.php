@@ -10,7 +10,7 @@ class Ncstate_Service_Remedy
     /**
      * API base URL
      */
-    const URI_BASE = 'https://remedyweb.oit.ncsu.edu/arsys/WSDL/public/ars00srv';
+    const URI_BASE = 'https://remedyservice.oit.ncsu.edu/arsys/WSDL/public/ars00srv';
 
     /**
      * Remedy Username
