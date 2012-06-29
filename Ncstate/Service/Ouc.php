@@ -155,7 +155,6 @@ class Ncstate_Service_Ouc
         if ($this->_lastRawResponse === false) {
 
             $this->_lastRawResponse = curl_error($ch);
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('CURL Error: ' . curl_error($ch));
         }
 
@@ -182,7 +181,6 @@ class Ncstate_Service_Ouc
 
         // Server provides error messages in the 'status' field.  It will either be 'success' or 'failure'
         if (strtolower($this->_lastParsedResponse[$method]['status']) == 'failure') {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Dining Service Error: ' .
                     $this->_lastParsedResponse['response']['message']);
         }

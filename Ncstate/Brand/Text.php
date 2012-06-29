@@ -11,7 +11,6 @@
 /**
  * Include the branded color class
  */
-require_once 'Ncstate/Brand/Color.php';
 
 /**
  * Service class to reliably generate on-brand text-based images that typically
@@ -164,7 +163,6 @@ class Ncstate_Brand_Text
         
         // if the request fails, throw exception
         if ($result === false) {
-            require_once 'Ncstate/Brand/Exception.php';
             throw new Ncstate_Brand_Exception('CURL Error: ' . curl_error($ch));
         }
         
@@ -191,7 +189,6 @@ class Ncstate_Brand_Text
         // Get the background color on brand
         $backgroundColorRgb = $brandColor->getColor($this->_options['backgroundColor'], true);
         if (is_null($backgroundColorRgb)) {
-            require_once 'Ncstate/Brand/Exception.php';
             throw new Ncstate_Brand_Exception('Proper branding color not found for backgroundColor');
         }
         $backgroundColor = imagecolorallocate($im, $backgroundColorRgb['red'], $backgroundColorRgb['green'], $backgroundColorRgb['blue']);
@@ -200,7 +197,6 @@ class Ncstate_Brand_Text
         // get the font color on brand
         $fontColorRgb = $brandColor->getColor($this->_options['fontColor'], true);
         if (is_null($fontColorRgb)) {
-            require_once 'Ncstate/Brand/Exception.php';
             throw new Ncstate_Brand_Exception('Propoer branding color not found for fontColor');
         }
         $fontColor = imagecolorallocate($im, $fontColorRgb['red'], $fontColorRgb['green'], $fontColorRgb['blue']);

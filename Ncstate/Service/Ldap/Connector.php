@@ -65,12 +65,10 @@ class Ncstate_Service_Ldap_Connector
         ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, 0);
 
         if (ldap_errno($resource) != 0) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception(ldap_error($resource), ldap_errno($resource));
         }
 
         if (!@ldap_bind($resource, $ldapBindDn, $ldapPass)) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception(ldap_error($resource), ldap_errno($resource));
         }
 
@@ -96,7 +94,6 @@ class Ncstate_Service_Ldap_Connector
         $ldapResult = @ldap_search($this->getLink(), $context, $queryString, $returnFields, 0, $this->_maxResults);
 
         if (!$ldapResult) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception(ldap_error($this->_link), ldap_errno($this->_link));
         }
 

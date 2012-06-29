@@ -165,32 +165,26 @@ class Ncstate_Service_Remedy
         }
 
         if (!isset($args['impact'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "impact" is required and not set');
         }
 
         if (!isset($args['origin'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "origin" is required and not set');
         }
 
         if (!isset($args['priority'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "priority" is required and not set');
         }
 
         if (!isset($args['problem'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "problem" is required and not set');
         }
 
         if (!isset($args['status'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "status" is required and not set');
         }
 
         if (!isset($args['workgroup_id']) && !isset($args['workgroup'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "workgroup" or "workgroup_id" is required and not set');
         }
 
@@ -258,7 +252,6 @@ class Ncstate_Service_Remedy
             } elseif (!is_null($value)) {
                 $args[$key] = $value;
             } else {
-                require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('Field for "' . $key . '" is required and not set');
             }
         }
@@ -481,7 +474,6 @@ class Ncstate_Service_Remedy
         }
 
         if (!isset($args['user_id'])) {
-            require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('Field for "user_id" is required and not set');
         }
 
@@ -590,7 +582,6 @@ class Ncstate_Service_Remedy
         try {
             $result = $this->_soapClient->{$method}($soapArgs);
         } catch (Exception $e) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('SOAP Error: ' . $e->getMessage());
         }
         return $result;
