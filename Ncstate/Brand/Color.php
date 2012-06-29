@@ -230,7 +230,6 @@ final class Ncstate_Brand_Color
         }
         
         // throw an exception if an invalid level is passed
-        require_once 'Ncstate/Brand/Exception.php';
         throw new Ncstate_Brand_Exception('Invalid WCAG level passed');
     }
     
@@ -248,7 +247,6 @@ final class Ncstate_Brand_Color
         $rgb = $this->getColor($colorKey, true);
 
         if (is_null($rgb)) {
-            require_once 'Ncstate/Brand/Exception.php';
             throw new Ncstate_Brand_Exception('Invalid color code passed as "' . $colorKey . '"');
         }   
         

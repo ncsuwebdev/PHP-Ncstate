@@ -157,7 +157,6 @@ class Ncstate_Service_Dining
             $meal = strtolower($meal);
 
             if (!in_array($meal, $this->_validMealTypes)) {
-                require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('Meal type must be one of "' . implode(', ', $this->_validMealTypes) . '"');
             }
         }
@@ -167,7 +166,6 @@ class Ncstate_Service_Dining
             $diet = strtolower($diet);
 
             if (!in_array($diet, $this->_validDietTypes)) {
-                require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('Diet type must be one of "' . implode(', ', $this->_validDietTypes) . '"');
             }
         }
@@ -298,7 +296,6 @@ class Ncstate_Service_Dining
         if ($this->_lastRawResponse === false) {
 
             $this->_lastRawResponse = curl_error($ch);
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('CURL Error: ' . curl_error($ch));
         }
 
@@ -325,7 +322,6 @@ class Ncstate_Service_Dining
 
         // Server provides error messages in the 'status' field.  It will either be 'success' or 'failure'
         if (strtolower($this->_lastParsedResponse[$method]['status']) == 'failure') {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Dining Service Error: ' .
                     $this->_lastParsedResponse['response']['message']);
         }

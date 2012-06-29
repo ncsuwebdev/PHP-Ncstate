@@ -10,7 +10,6 @@
 /**
  * Require LDAP connector class
  */
-require_once 'Ncstate/Service/Ldap/Connector.php';
 
 /**
  * Provides an interface to the user tables in NC State's LDAP services to
