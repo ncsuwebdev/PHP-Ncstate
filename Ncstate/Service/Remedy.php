@@ -554,6 +554,69 @@ class Ncstate_Service_Remedy
     }
 
     /**
+     * Retrieve information from the calls_cust form for all calls matching the specified qualification.
+     *
+     * @param string $qualification
+     * @param (null|string) $startRecord
+     * @param (null|string) $maxLimit
+     */
+    public function callCustList($qualification, $startRecord = '', $maxLimit = '')
+    {
+        $args = array(
+            'qualification' => $qualification,
+            'start_record'  => $startRecord,
+            'max_limit'     => $maxLimit,
+        );
+
+        return $this->_request('calls-cust', 'get-list-entry', $args);
+    }
+
+
+    /**
+     * Retrieve a list of the keywords associated with the specified solution.
+     *
+     * @param int $solutionId
+     * @param (int|null) $startRecord
+     * @param (int|null) $maxLimit
+     */
+    public function keywordList($solutionId, $startRecord = null, $maxLimit = null)
+    {
+        $args = array(
+            'solution_id' => $solutionId,
+            'startRecord'  => $startRecord,
+            'maxLimit'     => $maxLimit,
+        );
+
+        if (!is_null($startRecord)) {
+            $args['startRecord'] = $startRecord;
+        }
+
+        if (!is_null($maxLimit)) {
+            $args['maxLimit'] = $maxLimit;
+        }
+
+        return $this->_request('keywords', 'get-list', $args);
+    }
+
+    /**
+     * Increment one of the usage counters associated with Remedy solutions
+     *
+     * @param string $fieldName
+     * @param string $service
+     * @param int $solutionId
+     */
+    public function solutionIncrement($fieldName, $service, $solutionId)
+    {
+        $args = array(
+            'field_name'  => $fieldName,
+            'service'     => $service,
+            'solutionid' => $solutionId,
+        );
+
+        return $this->_request('solutions-inc-counter', 'increment', $args);
+    }
+
+    /**
         * Sends a request using curl to the required URI
         *
         * @param string $method Untappd method to call
