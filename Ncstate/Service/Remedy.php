@@ -485,7 +485,7 @@ class Ncstate_Service_Remedy
                 throw new Ncstate_Service_Exception('Field for "user_id" is required and not set');
         }
 
-        return $this->_request('calls', 'update-entry', $args);
+        return $this->_request('users', 'update-entry', $args);
     }
 
     /**
@@ -530,7 +530,35 @@ class Ncstate_Service_Remedy
     }
 
     /**
-     * Retrieve entries matching the specified qualification.
+     * Retrieve a list of solution-ids that match the specified qualification.
+     *
+     * Note that this method queries against the solutions form, so the
+     * qualification must not include solution keywords. If the qualification
+     * will include solution keywords, use the solutionList method instead.
+     *
+     * @param string $qualification
+     * @param (null|int) $startRecord
+     * @param (null|int) $maxLimit
+     */
+    public function solutionListNoKWDS($qualification, $startRecord = null, $maxLimit = null)
+    {
+        $args = array(
+            'qualification' => $qualification,
+        );
+
+        if (!is_null($startRecord)) {
+            $args['start_record'] = $startRecord;
+        }
+
+        if (!is_null($maxLimit)) {
+            $args['max_limit'] = $maxLimit;
+        }
+
+        return $this->_request('solutions', 'get-listNoKWDS', $args);
+    }
+
+    /**
+     * Retrieve list of Survey entries matching the specified qualification.
      *
      * @param string $qualification
      * @param (null|int) $startRecord
