@@ -485,7 +485,7 @@ class Ncstate_Service_Remedy
                 throw new Ncstate_Service_Exception('Field for "user_id" is required and not set');
         }
 
-        return $this->_request('calls', 'update-entry', $args);
+        return $this->_request('users', 'update-entry', $args);
     }
 
     /**
