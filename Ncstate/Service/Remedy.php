@@ -350,7 +350,7 @@ class Ncstate_Service_Remedy
     {
         $args = array(
             'group_name' => $workgroupName,
-            'group_id'   => null,
+            'group_id'   => '-1',
         );
 
         return $this->_request('workgroups', 'get-entry', $args);
