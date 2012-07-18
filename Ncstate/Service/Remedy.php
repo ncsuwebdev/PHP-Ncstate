@@ -578,7 +578,7 @@ class Ncstate_Service_Remedy
             $args['max_limit'] = $maxLimit;
         }
 
-        return $this->_request('survey', 'get-list', $args);
+        return $this->_request('surveys', 'get-list-entry', $args);
     }
 
     /**
