@@ -512,7 +512,7 @@ class Ncstate_Service_Remedy
      * @param (null|int) $startRecord
      * @param (null|int) $maxLimit
      */
-    public function solutionList($qualification, $startRecord = null, $maxLimit = null)
+    public function solutionList($qualification, $startRecord = null, $maxLimit = null, $withKeywords = true)
     {
         $args = array(
             'qualification' => $qualification,
@@ -526,35 +526,12 @@ class Ncstate_Service_Remedy
             $args['max_limit'] = $maxLimit;
         }
 
-        return $this->_request('solutions', 'get-list-entry', $args);
-    }
-
-    /**
-     * Retrieve a list of solution-ids that match the specified qualification.
-     *
-     * Note that this method queries against the solutions form, so the
-     * qualification must not include solution keywords. If the qualification
-     * will include solution keywords, use the solutionList method instead.
-     *
-     * @param string $qualification
-     * @param (null|int) $startRecord
-     * @param (null|int) $maxLimit
-     */
-    public function solutionListNoKWDS($qualification, $startRecord = null, $maxLimit = null)
-    {
-        $args = array(
-            'qualification' => $qualification,
-        );
-
-        if (!is_null($startRecord)) {
-            $args['start_record'] = $startRecord;
-        }
-
-        if (!is_null($maxLimit)) {
-            $args['max_limit'] = $maxLimit;
-        }
-
-        return $this->_request('solutions', 'get-listNoKWDS', $args);
+		if ($withKeywords) {
+			return $this->_request('solutions', 'get-list-entry', $args);
+		}
+		else {
+			return $this->_request('solutions', 'get-listNoKWDS', $args);
+		}
     }
 
     /**
