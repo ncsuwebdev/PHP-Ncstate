@@ -526,12 +526,12 @@ class Ncstate_Service_Remedy
             $args['max_limit'] = $maxLimit;
         }
 
-		if ($withKeywords) {
-			return $this->_request('solutions', 'get-list-entry', $args);
-		}
-		else {
-			return $this->_request('solutions', 'get-listNoKWDS', $args);
-		}
+        if ($withKeywords) {
+            return $this->_request('solutions', 'get-list-entry', $args);
+        }
+        else {
+            return $this->_request('solutions', 'get-listNoKWDS', $args);
+        }
     }
 
     /**
