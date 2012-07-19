@@ -350,7 +350,7 @@ class Ncstate_Service_Remedy
     {
         $args = array(
             'group_name' => $workgroupName,
-            'group_id'   => null,
+            'group_id'   => '-1',
         );
 
         return $this->_request('workgroups', 'get-entry', $args);
@@ -485,7 +485,7 @@ class Ncstate_Service_Remedy
                 throw new Ncstate_Service_Exception('Field for "user_id" is required and not set');
         }
 
-        return $this->_request('calls', 'update-entry', $args);
+        return $this->_request('users', 'update-entry', $args);
     }
 
     /**
@@ -512,7 +512,7 @@ class Ncstate_Service_Remedy
      * @param (null|int) $startRecord
      * @param (null|int) $maxLimit
      */
-    public function solutionList($qualification, $startRecord = null, $maxLimit = null)
+    public function solutionList($qualification, $startRecord = null, $maxLimit = null, $withKeywords = true)
     {
         $args = array(
             'qualification' => $qualification,
@@ -526,11 +526,16 @@ class Ncstate_Service_Remedy
             $args['max_limit'] = $maxLimit;
         }
 
-        return $this->_request('solutions', 'get-list-entry', $args);
+		if ($withKeywords) {
+			return $this->_request('solutions', 'get-list-entry', $args);
+		}
+		else {
+			return $this->_request('solutions', 'get-listNoKWDS', $args);
+		}
     }
 
     /**
-     * Retrieve entries matching the specified qualification.
+     * Retrieve list of Survey entries matching the specified qualification.
      *
      * @param string $qualification
      * @param (null|int) $startRecord
@@ -550,7 +555,7 @@ class Ncstate_Service_Remedy
             $args['max_limit'] = $maxLimit;
         }
 
-        return $this->_request('survey', 'get-list', $args);
+        return $this->_request('surveys', 'get-list-entry', $args);
     }
 
     /**
