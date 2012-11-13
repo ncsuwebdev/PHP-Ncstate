@@ -1,2 +1,18 @@
-Utility PHP library to assist with the creation and deployment
-of NC State-related assets.
+{
+    "name": "ncsuwebdev/PHP-Ncstate",
+    "type": "library",
+    "description": "Utility library for NC State",
+    "keywords": ["ncstate","ncsu"],
+    "homepage": "http://github.com/ncsuwebdev/PHP-Ncstate",
+    "authors": [
+        {
+            "name": "Jason Austin",
+            "email": "jfaustin@ncsu.edu",
+            "homepage": "http://ot.ncsu.edu",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    }
+}
