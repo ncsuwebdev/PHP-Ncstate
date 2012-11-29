@@ -109,6 +109,15 @@ class Ncstate_Service_Ouc
 
         return $this->_request('getAll', $args);
     }
+    
+    public function search($term)
+    {
+        $args = array(
+            'term' => $term
+        );
+
+        return $this->_request('searchOuc', $args);
+    }
 
     /**
      * Sends a request using curl to the required endpoint
@@ -128,9 +137,6 @@ class Ncstate_Service_Ouc
 
         // Add the method we are calling
         $args['method'] = $method;
-
-        // Add the version of the API to use
-        $args['v'] = $this->_version;
 
         // Append the API key to the args passed in the query string
         $args['format'] = $this->_format;
