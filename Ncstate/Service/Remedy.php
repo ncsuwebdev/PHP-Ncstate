@@ -78,24 +78,7 @@ class Ncstate_Service_Remedy
             'max_limit'     => $maxLimit,
         );
 
-        $result = $this->_request('calls', 'get-list', $args);
-
-        if (is_array($result->getListValues)) {
-            foreach ($result->getListValues as &$r) {
-                if (isset($r->{'problem_text'})) {
-                    $r->{'problem_text'} = $this->_parseDigest($r->{'problem_text'});
-                }
-            }
-
-            unset($r);
-
-        } else {
-            if (isset($result->getListValues->{'problem_text'})) {
-                $result->getListValues->{'problem_text'} = $this->_parseDigest($result->getListValues->{'problem_text'});
-            }
-        }
-
-        return $result;
+        return $this->_request('calls', 'get-list', $args);
     }
 
     /**
