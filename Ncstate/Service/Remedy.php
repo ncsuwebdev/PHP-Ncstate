@@ -415,8 +415,8 @@ class Ncstate_Service_Remedy
      */
     public function validateCredentials($credentials) {
         $args = array(
-            'username' => $credentials['username'],
-            'password' => $credentials['password'],
+            'login_name' => $credentials['username'],
+            'password'   => $credentials['password'],
         );
 
         return $this->_request('users', 'validate-credentials', $args);
@@ -525,7 +525,7 @@ class Ncstate_Service_Remedy
         if (!is_null($maxLimit)) {
             $args['max_limit'] = $maxLimit;
         }
-        
+
         if ($withKeywords) {
             return $this->_request('solutions', 'get-list-entry', $args);
 	} else {
@@ -572,7 +572,26 @@ class Ncstate_Service_Remedy
             'max_limit'     => $maxLimit,
         );
 
-        return $this->_request('calls-cust', 'get-list-entry', $args);
+        $result = $this->_request('calls-cust', 'get-list-entry', $args);
+
+        if (is_array($result->getListValues)) {
+            foreach ($result->getListValues as &$r) {
+                if (isset($r->{'problem_text'})) {
+                    $r->{'problem_text'} = $this->_parseDigest($r->{'problem_text'});
+                }
+            }
+
+            unset($r);
+
+        } else {
+            if (isset($result->getListValues->{'problem_text'})) {
+                $result->getListValues->{'problem_text'} = $this->_parseDigest($result->getListValues->{'problem_text'});
+            }
+        }
+
+        unset($r);
+
+        return $result;
     }
 
 
