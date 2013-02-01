@@ -732,10 +732,7 @@ class Ncstate_Service_Remedy
     public function callPrepareMail($callId, array $params, $sendmail=false)
     {
 		// Grab the call to ensure it is a valid call id, and to get the workgroup
-        // $call = $this->callGet($callId);
-		$call = new stdClass();
-		$call->problem = 'Simulated Problem';
-		$call->workgroup = 'TEST';
+        $call = $this->callGet($callId);
 		
 		// Simple parameter validation (RRFC2822 is WAY too complicated to implement a complete
 		// validation, and php's filter_var function doesn't allow things like "User <user@host.com>")
