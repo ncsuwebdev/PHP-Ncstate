@@ -528,7 +528,7 @@ class Ncstate_Service_Remedy
 
         if ($withKeywords) {
             return $this->_request('solutions', 'get-list-entry', $args);
-	} else {
+    } else {
             return $this->_request('solutions', 'get-listNoKWDS', $args);
         }
     }
@@ -640,15 +640,15 @@ class Ncstate_Service_Remedy
     }
 
     /**
-        * Sends a request using curl to the required URI
-        *
-        * @param string $method Untappd method to call
-        * @param array $args key value array or arguments
-        *
-        * @throws Awsm_Service_Untappd_Exception
-        *
-        * @return stdClass object
-        */
+	* Sends a request using curl to the required URI
+	*
+	* @param string $method Untappd method to call
+	* @param array $args key value array or arguments
+	*
+	* @throws Awsm_Service_Untappd_Exception
+	*
+	* @return stdClass object
+	*/
     protected function _request($wsdlEndpoint, $method, $args)
     {
         $soapArgs = new stdClass();
@@ -712,152 +712,164 @@ class Ncstate_Service_Remedy
     {
         return $this->_soapClient;
     }
-	
-	 /**
+    
+     /**
      * Prepare mail data for a specific call
      *
      * @param int $callId Call ID message to use in subject line
-	 * @param array $params Mail array( <to>, <from>, <subject>, <body>, [headers] )
-	 *		to 			=> string
-	 *		from 		=> string
-	 *		subject 	=> string|null
-	 *		body 		=> string
-	 *		headers 	=> array
-	 * @param boolean $sendmail Should we make a call to $this->callSendMail() instead of returning data
-	 *
-	 * @throws Ncstate_Service_Exception
-	 *
-	 * @return array|boolean
+     * @param array $params Mail array( <to>, <from>, <subject>, <body>, [headers] )
+     *        to		=> string
+     *        from      => string
+     *        subject   => string|null
+     *        body      => string
+     *        headers   => array
+     * @param boolean $sendmail Should we make a call to $this->callSendMail() instead of returning data
+     *
+     * @throws Ncstate_Service_Exception
+     *
+     * @return array|boolean
      */
     public function callPrepareMail($callId, array $params, $sendmail=false)
     {
-		// Grab the call to ensure it is a valid call id, and to get the workgroup
+        // Grab the call to ensure it is a valid call id, and to get the workgroup
         $call = $this->callGet($callId);
-		
-		// Simple parameter validation (RRFC2822 is WAY too complicated to implement a complete
-		// validation, and php's filter_var function doesn't allow things like "User <user@host.com>")
-		if (!isset($params['to'])){
-			require_once 'Ncstate/Service/Exception.php';
-				throw new Ncstate_Service_Exception( 'Missing recipient address' );
+        
+        // Simple parameter validation (RRFC2822 is WAY too complicated to implement a complete
+        // validation, and php's filter_var function doesn't allow things like "User <user@host.com>")
+        if (!isset($params['to'])) {
+            require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('Missing recipient address');
+        }
+        if (!isset($params['from'])) {
+            require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('Missing sender address');
+        }
+        if (!isset($params['subject'])) {
+            require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('Missing message subject');
+        }
+        if (!isset($params['body'])) {
+            require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('Missing message body');
+        }
+        if (isset($params['headers']) && !is_array($params['headers'])) {
+            require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('Headers must be passed as an array');
+        }
+        
+        // Build the subject line
+        if (empty($params['subject'])) {
+            $params['subject'] = $call->problem;
+        }
+        $subject = sprintf('Call %d: %s', $callId, $params['subject']);
+        
+        // Build the mail headers
+        $headers   = array();
+        $headers[] = 'MIME-Version: 1.0';
+        $headers[] = 'Content-type: text/plain; charset=iso-8859-1';
+        $headers[] = sprintf('From: %s', $params['from']);
+        if (isset($params['cc'])) {
+			$headers[] = sprintf('Cc: %s', $params['cc']);
 		}
-		if (!isset($params['from'])){
-			require_once 'Ncstate/Service/Exception.php';
-				throw new Ncstate_Service_Exception( 'Missing sender address' );
+        if (isset($params['bcc'])) {
+			$headers[] = sprintf('Bcc: %s', $params['bcc']);
 		}
-		if (!isset($params['subject'])){
-			require_once 'Ncstate/Service/Exception.php';
-				throw new Ncstate_Service_Exception( 'Missing message subject' );
+        $headers[] = sprintf('Reply-To: Remedy <%s@remedy.ncsu.edu>', $call->workgroup);
+        $headers[] = "Subject: $subject";
+        $headers[] = 'X-Mailer: PHP/' . phpversion();
+        
+        // Add the user defined headers to the end
+        if (isset($params['headers'])) {
+            foreach ($params['headers'] as $header) {
+                $headers[] = preg_replace('/[\r\n]/i', '', $header);
+            }
+        }
+        
+        // Build the output array
+        $maildata = array(
+            'to'      => $params['to'],
+            'subject' => $subject,
+            'body'    => strip_tags($params['body']),
+            'headers' => implode("\r\n", $headers),
+        );
+        
+        // Call sendmail or just return the data
+        if ($sendmail) {
+			return $this->callSendMail($maildata);
 		}
-		if (!isset($params['body'])){
-			require_once 'Ncstate/Service/Exception.php';
-				throw new Ncstate_Service_Exception( 'Missing message body' );
-		}
-		if (isset($params['headers']) && !is_array($params['headers'])) {
-			require_once 'Ncstate/Service/Exception.php';
-				throw new Ncstate_Service_Exception( 'Headers must be passed as an array' );
-		}
-		
-		// Build the subject line
-		if (empty($params['subject'])) {
-			$params['subject'] = $call->problem;
-		}
-		$subject = sprintf('Call %d: %s', $callId, $params['subject'] );
-		
-		// Build the mail headers
-		$headers   = array();
-		$headers[] = 'MIME-Version: 1.0';
-		$headers[] = 'Content-type: text/plain; charset=iso-8859-1';
-		$headers[] = sprintf('From: %s', $params['from']);
-		if (isset($params['cc'])) $headers[] = sprintf('Cc: %s', $params['cc']);
-		if (isset($params['bcc'])) $headers[] = sprintf('Bcc: %s', $params['bcc']);
-		$headers[] = sprintf('Reply-To: Remedy <%s@remedy.ncsu.edu>', $call->workgroup);
-		$headers[] = "Subject: $subject";
-		$headers[] = 'X-Mailer: PHP/' . phpversion();
-		
-		// Add the user defined headers to the end
-		if (isset($params['headers'])) {
-			foreach ($params['headers'] as $header) {
-				$headers[] = preg_replace( '/[\r\n]/i', '', $header );
-			}
-		}
-		
-		// Build the output array
-		$maildata = array(
-			'to' => $params['to'],
-			'subject' => $subject,
-			'body' => strip_tags($params['body']),
-			'headers' => implode( "\r\n", $headers ),
-		);
-		
-		// Call sendmail or just return the data
-		if ($sendmail) return $this->callSendMail( $maildata );
-		return $maildata;
+        return $maildata;
     }
-	
-	/**
+    
+    /**
      * Send mail using php's default mailer, and update the remedy call
      *
      * @param array $data Data array from $this->callPrepareMail()
-	 * @param boolean $updateRemedy Should the Remedy call be updated with the mail data
-	 *
-	 * @throws Ncstate_Service_Exception
-	 *
-	 * @return boolean
+     * @param boolean $updateRemedy Should the Remedy call be updated with the mail data
+     *
+     * @throws Ncstate_Service_Exception
+     *
+     * @return boolean
      */
-    public function callSendMail($data,$updateRemedy=true)
+    public function callSendMail(array $data, $updateRemedy=true)
     {
-		// Sanity Check
-		foreach (array('to', 'subject', 'body', 'headers') as $req) {
-			if (!isset($data[$req])) {
-				require_once 'Ncstate/Service/Exception.php';
-					throw new Ncstate_Service_Exception( 'Invalid mail data' );
-			}
+        // Sanity Check
+        foreach (array('to', 'subject', 'body', 'headers') as $req) {
+            if (!isset($data[$req])) {
+                require_once 'Ncstate/Service/Exception.php';
+                    throw new Ncstate_Service_Exception('Invalid mail data');
+            }
+        }
+        if (!preg_match('/^Call ([0-9]+):/i', $data['subject'], $match)) {
+            require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('Invalid subject line');
+        }
+        $callId = $match[1];
+        
+        // Verify the call exists
+        $call = $this->callGet($callId);
+        
+        // Send the email
+        $result = mail($data['to'], $data['subject'], $data['body'], $data['headers']);
+        
+        // Verify message queued successfully
+        if (!$result) {
+            $error = error_get_last();
+            require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception(sprintf('Unable to send mail: %s', $error['message']));
+        }
+        if (!$updateRemedy) {
+			return true;
 		}
-		if (!preg_match('/^Call ([0-9]+):/i', $data['subject'], $match)) {
-			require_once 'Ncstate/Service/Exception.php';
-					throw new Ncstate_Service_Exception( 'Invalid subject line' );
+        
+        // Check for from, Cc and Bcc
+        $from = '';
+        foreach(explode("\r\n", $data['headers']) as $header) {
+            $header = explode(': ',$header);
+            switch($header[0]) {
+                case 'From':
+                    $from = $header[1];
+                    break;
+                case 'Cc':
+                    $cc = $header[1];
+                    break;
+                case 'Bcc':
+                    $bcc = $header[1];
+                    break;
+            }
+        }
+        
+        // Assemble text
+        $message = sprintf("From: %s\nTo: %s\n", $from, $data['to']);
+        if (isset($cc)) {
+			$message .= "CC: $cc\n";
 		}
-		$callId = $match[1];
-		
-		// Verify the call exists
-		$call = $this->callGet($callId);
-		
-		// Send the email
-		$result = mail($data['to'], $data['subject'], $data['body'], $data['headers']);
-		
-		// Verify message queued successfully
-		if (!$result) {
-			$error = error_get_last();
-			require_once 'Ncstate/Service/Exception.php';
-				throw new Ncstate_Service_Exception(sprintf('Unable to send mail: %s', $error['message']));
+        if (isset($bcc)) {
+			$message .= "BCC: $bcc\n";
 		}
-		if (!$updateRemedy) return true;
-		
-		// Check for from, Cc and Bcc
-		$from = '';
-		foreach(explode("\r\n", $data['headers']) as $header) {
-			$header = explode(': ',$header);
-			switch($header[0]) {
-				case 'From':
-					$from = $header[1];
-					break;
-				case 'Cc':
-					$cc = $header[1];
-					break;
-				case 'Bcc':
-					$bcc = $header[1];
-					break;
-			}
-		}
-		
-		// Assemble text
-		$message = sprintf("From: %s\nTo: %s\n", $from, $data['to']);
-		if (isset($cc)) $message .= "CC: $cc\n";
-		if (isset($bcc)) $message .= "BCC: $bcc\n";
-		$message .= sprintf("Subject: %s\n\n%s", substr($data['subject'], strpos($data['subject'],':')+2), $data['body']);
-		
-		// Update remedy call
-		$this->callUpdate($callId, array('problem_text' => $message));
-		return true;
+        $message .= sprintf("Subject: %s\n\n%s", substr($data['subject'], strpos($data['subject'],':')+2), $data['body']);
+        
+        // Update remedy call
+        $this->callUpdate($callId, array('problem_text' => $message));
+        return true;
     }
 }
