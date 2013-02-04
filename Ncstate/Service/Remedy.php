@@ -769,10 +769,10 @@ class Ncstate_Service_Remedy
         $headers[] = 'Content-type: text/plain; charset=iso-8859-1';
         $headers[] = sprintf('From: %s', $params['from']);
         if (isset($params['cc'])) {
-			$headers[] = sprintf('Cc: %s', $params['cc']);
-		}
+            $headers[] = sprintf('Cc: %s', $params['cc']);
+        }
         if (isset($params['bcc'])) {
-			$headers[] = sprintf('Bcc: %s', $params['bcc']);
+            $headers[] = sprintf('Bcc: %s', $params['bcc']);
 		}
         $headers[] = sprintf('Reply-To: Remedy <%s@remedy.ncsu.edu>', $call->workgroup);
         $headers[] = "Subject: $subject";
@@ -795,8 +795,8 @@ class Ncstate_Service_Remedy
         
         // Call sendmail or just return the data
         if ($sendmail) {
-			return $this->callSendMail($maildata);
-		}
+            return $this->callSendMail($maildata);
+        }
         return $maildata;
     }
     
@@ -838,8 +838,8 @@ class Ncstate_Service_Remedy
                 throw new Ncstate_Service_Exception(sprintf('Unable to send mail: %s', $error['message']));
         }
         if (!$updateRemedy) {
-			return true;
-		}
+            return true;
+        }
         
         // Check for from, Cc and Bcc
         $from = '';
@@ -861,11 +861,11 @@ class Ncstate_Service_Remedy
         // Assemble text
         $message = sprintf("From: %s\nTo: %s\n", $from, $data['to']);
         if (isset($cc)) {
-			$message .= "CC: $cc\n";
-		}
+            $message .= "CC: $cc\n";
+        }
         if (isset($bcc)) {
-			$message .= "BCC: $bcc\n";
-		}
+            $message .= "BCC: $bcc\n";
+        }
         $message .= sprintf("Subject: %s\n\n%s", substr($data['subject'], strpos($data['subject'],':')+2), $data['body']);
         
         // Update remedy call
