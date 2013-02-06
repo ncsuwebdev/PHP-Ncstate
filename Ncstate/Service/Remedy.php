@@ -109,6 +109,11 @@ class Ncstate_Service_Remedy
             'time_spent'       => null,     // time spent, in seconds
             'workgroup_id'     => null,     // workgroup id number
             'workgroup'        => null,     // workgroup name
+            'email_to'         => null,     // to: address to send email
+            'email_text'       => null,     // text of the email
+            'email_cc'         => null,     // cc: address to copy email
+            'email_bcc'        => null,     // bcc: address to copy email
+            'email_subject'    => null,     // subject of the email
         );
 
         $args = array();
@@ -120,7 +125,33 @@ class Ncstate_Service_Remedy
                 $args[$key] = $value;
             }
         }
-
+        
+        // Check to see if the update includes the sending of email via setting email_to or email_text
+        if (isset($args['email_to']) || isset($args['email_text'])) {
+            
+            // both must be set, throw exception otherwise
+            if (!isset($args['email_text'])) {
+                require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('If email_to field is set, email_text must also be set');
+            }
+            
+            if (!isset($args['email_to'])) {
+                require_once 'Ncstate/Service/Exception.php';
+                throw new Ncstate_Service_Exception('If email_text field is set, email_to must also be set');
+            }
+            
+            // tells the remedy service to send email
+            $args['send_email'] = 'Pending';
+            
+        } else {
+            // unset any email parameters if no email is to be sent
+            unset($args['email_to']);
+            unset($args['email_text']);
+            unset($args['email_cc']);
+            unset($args['email_bcc']);
+            unset($args['email_subject']);
+        }        
+        
         return $this->_request('calls', 'update-entry', $args);
     }
 
@@ -208,13 +239,7 @@ class Ncstate_Service_Remedy
             'entry_id' => $entryId
         );
 
-        try{
-            $result = $this->_request('calls-attachments', 'get-entry', $args);
-        } catch (Ncstate_Service_Exception $e) {
-            throw $e;
-        }
-
-        return $result;
+        return $this->_request('calls-attachments', 'get-entry', $args);        
     }
 
     /**
@@ -482,7 +507,7 @@ class Ncstate_Service_Remedy
 
         if (!isset($args['user_id'])) {
             require_once 'Ncstate/Service/Exception.php';
-                throw new Ncstate_Service_Exception('Field for "user_id" is required and not set');
+            throw new Ncstate_Service_Exception('Field for "user_id" is required and not set');
         }
 
         return $this->_request('users', 'update-entry', $args);
@@ -640,15 +665,15 @@ class Ncstate_Service_Remedy
     }
 
     /**
-        * Sends a request using curl to the required URI
-        *
-        * @param string $method Untappd method to call
-        * @param array $args key value array or arguments
-        *
-        * @throws Awsm_Service_Untappd_Exception
-        *
-        * @return stdClass object
-        */
+     * Sends a request using curl to the required URI
+     *
+     * @param string $method Remedy method to call
+     * @param array $args key value array or arguments
+     *
+     * @throws Ncstate_Service_Exception
+     *
+     * @return stdClass object
+     */
     protected function _request($wsdlEndpoint, $method, $args)
     {
         $soapArgs = new stdClass();
@@ -657,9 +682,13 @@ class Ncstate_Service_Remedy
         foreach ($args as $key => $a) {
             $soapArgs->$key = ($a != '' && !is_null($a)) ? $a : '';
         }
+        
         $wsdl = self::URI_BASE . '/' . $wsdlEndpoint;
 
-        $this->_soapClient = new SoapClient($wsdl, array('trace' => true));
+        $this->_soapClient = new SoapClient($wsdl, array(
+            'trace'      => true,
+            'cache_wsdl' => WSDL_CACHE_NONE
+        ));
 
         $headers = array();
 
@@ -682,6 +711,13 @@ class Ncstate_Service_Remedy
         return $result;
     }
 
+    /**
+     * Parses the digest field that comes back from the Remedy service into
+     * a stdClass object
+     * 
+     * @param string $digest
+     * @return \stdClass
+     */
     protected function _parseDigest($digest)
     {
         $entries = preg_split('/\x{f8e2}/u', $digest);
