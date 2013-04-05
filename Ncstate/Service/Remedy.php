@@ -125,24 +125,22 @@ class Ncstate_Service_Remedy
                 $args[$key] = $value;
             }
         }
-        
+
         // Check to see if the update includes the sending of email via setting email_to or email_text
         if (isset($args['email_to']) || isset($args['email_text'])) {
-            
+
             // both must be set, throw exception otherwise
             if (!isset($args['email_text'])) {
-                require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('If email_to field is set, email_text must also be set');
             }
-            
+
             if (!isset($args['email_to'])) {
-                require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('If email_text field is set, email_to must also be set');
             }
-            
+
             // tells the remedy service to send email
             $args['send_email'] = 'Pending';
-            
+
         } else {
             // unset any email parameters if no email is to be sent
             unset($args['email_to']);
@@ -150,8 +148,8 @@ class Ncstate_Service_Remedy
             unset($args['email_cc']);
             unset($args['email_bcc']);
             unset($args['email_subject']);
-        }        
-        
+        }
+
         return $this->_request('calls', 'update-entry', $args);
     }
 
@@ -196,32 +194,26 @@ class Ncstate_Service_Remedy
         }
 
         if (!isset($args['impact'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "impact" is required and not set');
         }
 
         if (!isset($args['origin'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "origin" is required and not set');
         }
 
         if (!isset($args['priority'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "priority" is required and not set');
         }
 
         if (!isset($args['problem'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "problem" is required and not set');
         }
 
         if (!isset($args['status'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "status" is required and not set');
         }
 
         if (!isset($args['workgroup_id']) && !isset($args['workgroup'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "workgroup" or "workgroup_id" is required and not set');
         }
 
@@ -239,7 +231,7 @@ class Ncstate_Service_Remedy
             'entry_id' => $entryId
         );
 
-        return $this->_request('calls-attachments', 'get-entry', $args);        
+        return $this->_request('calls-attachments', 'get-entry', $args);
     }
 
     /**
@@ -283,7 +275,6 @@ class Ncstate_Service_Remedy
             } elseif (!is_null($value)) {
                 $args[$key] = $value;
             } else {
-                require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('Field for "' . $key . '" is required and not set');
             }
         }
@@ -506,7 +497,6 @@ class Ncstate_Service_Remedy
         }
 
         if (!isset($args['user_id'])) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Field for "user_id" is required and not set');
         }
 
@@ -682,7 +672,7 @@ class Ncstate_Service_Remedy
         foreach ($args as $key => $a) {
             $soapArgs->$key = ($a != '' && !is_null($a)) ? $a : '';
         }
-        
+
         $wsdl = self::URI_BASE . '/' . $wsdlEndpoint;
 
         $this->_soapClient = new SoapClient($wsdl, array(
@@ -705,7 +695,6 @@ class Ncstate_Service_Remedy
         try {
             $result = $this->_soapClient->{$method}($soapArgs);
         } catch (Exception $e) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('SOAP Error: ' . $e->getMessage());
         }
         return $result;
@@ -714,7 +703,7 @@ class Ncstate_Service_Remedy
     /**
      * Parses the digest field that comes back from the Remedy service into
      * a stdClass object
-     * 
+     *
      * @param string $digest
      * @return \stdClass
      */

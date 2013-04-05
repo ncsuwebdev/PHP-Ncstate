@@ -1,6 +1,6 @@
 <?php
 /**
- * Set of classes to programatically communicate with services at NC State 
+ * Set of classes to programatically communicate with services at NC State
  * University
  *
  * @package Ncstate_Service
@@ -14,7 +14,7 @@
  * The class uses the public Dining API service provided by OIT
  * to get the menus, locations, and hours for the various dining establishments
  * on campus.
- * 
+ *
  * @see     http://webapps.ncsu.edu/dining
  *
  */
@@ -157,7 +157,6 @@ class Ncstate_Service_Dining
             $meal = strtolower($meal);
 
             if (!in_array($meal, $this->_validMealTypes)) {
-                require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('Meal type must be one of "' . implode(', ', $this->_validMealTypes) . '"');
             }
         }
@@ -167,7 +166,6 @@ class Ncstate_Service_Dining
             $diet = strtolower($diet);
 
             if (!in_array($diet, $this->_validDietTypes)) {
-                require_once 'Ncstate/Service/Exception.php';
                 throw new Ncstate_Service_Exception('Diet type must be one of "' . implode(', ', $this->_validDietTypes) . '"');
             }
         }
@@ -252,7 +250,7 @@ class Ncstate_Service_Dining
 
         return $this->_request('getLocationTypes', $args);
     }
- 
+
     /**
      * Sends a request using curl to the required endpoint
      *
@@ -284,7 +282,7 @@ class Ncstate_Service_Dining
                 unset($args[$key]);
             }
         }
-        
+
         $this->_lastRequestUri = self::BASE_URL . '?' . http_build_query($args);
 
         // Set curl options and execute the request
@@ -298,7 +296,6 @@ class Ncstate_Service_Dining
         if ($this->_lastRawResponse === false) {
 
             $this->_lastRawResponse = curl_error($ch);
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('CURL Error: ' . curl_error($ch));
         }
 
@@ -316,8 +313,8 @@ class Ncstate_Service_Dining
         // The response will always have a wrapper element that is the version of the API we're using.
         // We don't care about that, so we'll strip it out
         $this->_lastParsedResponse = array_pop($this->_lastParsedResponse);
-        
-        // if it was xml, we'll remove the attributes that were attached to the 
+
+        // if it was xml, we'll remove the attributes that were attached to the
         // root element as they were meaningless
         if ($this->_format == 'xml') {
             unset($this->_lastParsedResponse['@attributes']);
@@ -325,7 +322,6 @@ class Ncstate_Service_Dining
 
         // Server provides error messages in the 'status' field.  It will either be 'success' or 'failure'
         if (strtolower($this->_lastParsedResponse[$method]['status']) == 'failure') {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Dining Service Error: ' .
                     $this->_lastParsedResponse['response']['message']);
         }

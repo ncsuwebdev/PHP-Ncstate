@@ -1,6 +1,6 @@
 <?php
 /**
- * Set of classes to programatically communicate with services at NC State 
+ * Set of classes to programatically communicate with services at NC State
  * University
  *
  * @package Ncstate_Service
@@ -13,7 +13,7 @@
  *
  * The class uses the public OUC API service provided by OIT
  * to get the departmental OUC numbers for campus.
- * 
+ *
  * @see     http://webapps.ncsu.edu/ouc
  *
  */
@@ -109,7 +109,7 @@ class Ncstate_Service_Ouc
 
         return $this->_request('getAll', $args);
     }
-    
+
     public function search($term)
     {
         $args = array(
@@ -147,7 +147,7 @@ class Ncstate_Service_Ouc
                 unset($args[$key]);
             }
         }
-        
+
         $this->_lastRequestUri = self::BASE_URL . '?' . http_build_query($args);
 
         // Set curl options and execute the request
@@ -161,7 +161,6 @@ class Ncstate_Service_Ouc
         if ($this->_lastRawResponse === false) {
 
             $this->_lastRawResponse = curl_error($ch);
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('CURL Error: ' . curl_error($ch));
         }
 
@@ -179,8 +178,8 @@ class Ncstate_Service_Ouc
         // The response will always have a wrapper element that is the version of the API we're using.
         // We don't care about that, so we'll strip it out
         $this->_lastParsedResponse = array_pop($this->_lastParsedResponse);
-        
-        // if it was xml, we'll remove the attributes that were attached to the 
+
+        // if it was xml, we'll remove the attributes that were attached to the
         // root element as they were meaningless
         if ($this->_format == 'xml') {
             unset($this->_lastParsedResponse['@attributes']);
@@ -188,7 +187,6 @@ class Ncstate_Service_Ouc
 
         // Server provides error messages in the 'status' field.  It will either be 'success' or 'failure'
         if (strtolower($this->_lastParsedResponse[$method]['status']) == 'failure') {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception('Dining Service Error: ' .
                     $this->_lastParsedResponse['response']['message']);
         }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Set of classes to programatically communicate with services at NC State 
+ * Set of classes to programatically communicate with services at NC State
  * University
  *
  * @package Ncstate_Service
@@ -8,10 +8,10 @@
  */
 
 /**
- * Generic connector to the NC State LDAP service.  Connects to secure service 
- * when a username and password are provided, otherwise it connects to the 
+ * Generic connector to the NC State LDAP service.  Connects to secure service
+ * when a username and password are provided, otherwise it connects to the
  * unsecure service on anonymous bind.
- * 
+ *
  * @see http://www.ldap.ncsu.edu
  */
 
@@ -23,24 +23,24 @@ class Ncstate_Service_Ldap_Connector
      * @var string
      */
     const SECURE_LDAP_SERVER = 'ldaps://ldap.ncsu.edu';
-    
+
     /**
      * NC State's unsecure LDAP service (for anonymous binds)
-     * 
+     *
      * @var string
      */
     const LDAP_SERVER = 'ldap://ldap.ncsu.edu';
-        
+
     /**
      * The LDAP link object
      *
      * @var resource
      */
     private $_link = null;
-    
+
     /**
      * Whether the LDAP connection is anonymous or not
-     * 
+     *
      * @var boolean
      */
     private $_anonymous = true;
@@ -57,7 +57,7 @@ class Ncstate_Service_Ldap_Connector
         $ldapHost = ($ldapBindDn == '' || $ldapPass == '') ? self::LDAP_SERVER : self::SECURE_LDAP_SERVER;
 
         $this->_anonymous = ($ldapBindDn == '' || $ldapPass == '');
-        
+
         // Connect to the resource
         $resource = @ldap_connect($ldapHost);
 
@@ -65,18 +65,16 @@ class Ncstate_Service_Ldap_Connector
         ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, 0);
 
         if (ldap_errno($resource) != 0) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception(ldap_error($resource), ldap_errno($resource));
         }
 
         if (!@ldap_bind($resource, $ldapBindDn, $ldapPass)) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception(ldap_error($resource), ldap_errno($resource));
         }
 
         $this->_link = $resource;
     }
-    
+
     /**
      * Runs a standard search on LDAP
      *
@@ -96,7 +94,6 @@ class Ncstate_Service_Ldap_Connector
         $ldapResult = @ldap_search($this->getLink(), $context, $queryString, $returnFields, 0, $this->_maxResults);
 
         if (!$ldapResult) {
-            require_once 'Ncstate/Service/Exception.php';
             throw new Ncstate_Service_Exception(ldap_error($this->_link), ldap_errno($this->_link));
         }
 
@@ -106,7 +103,7 @@ class Ncstate_Service_Ldap_Connector
         }
 
         $result = @ldap_get_entries($this->getLink(), $ldapResult);
-        
+
         unset($result["count"]);
 
         $ret = array();
@@ -131,32 +128,32 @@ class Ncstate_Service_Ldap_Connector
 
         if (!is_null($sortKey)) {
             usort($ret, create_function('$a, $b', "return strnatcasecmp(\$a['$sortKey'], \$b['$sortKey']);"));
-            
+
             if ($sortOrder == "desc") {
                $ret = array_reverse($ret);
-            }          
+            }
         }
-        
-        return $ret;        
-    }   
-    
+
+        return $ret;
+    }
+
     /**
      * Returns anonymous flag
-     * 
+     *
      * @return boolean
      */
     public function isAnonymous()
     {
         return $this->_anonymous;
     }
-    
+
     /**
      * Returns the LDAP resource
-     * 
+     *
      * @return resource
      */
     public function getLink()
     {
         return $this->_link;
-    }    
+    }
 }
