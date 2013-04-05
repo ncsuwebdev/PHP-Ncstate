@@ -2,7 +2,7 @@
 /**
  * Set of classes to programatically create certain aspects of the
  * approved brand at NC State University
- * 
+ *
  * @package Ncstate
  * @author  Office of Information Technology - Outreach Technology
  */
@@ -17,12 +17,12 @@ final class Ncstate_Version
      * Version of the API
      * @var string
      */
-    const VERSION = '1.0.6';
-    
+    const VERSION = '1.0.7';
+
     /**
-     * Compare the specified version string $version with the current 
+     * Compare the specified version string $version with the current
      * Ncstate_Version::VERSION
-     * 
+     *
      * Borrowed from Zend_Version implementation in Zend Framework
      *
      * @param string $version - A version string (e.g. "0.7.1").
@@ -36,5 +36,5 @@ final class Ncstate_Version
         $version = strtolower($version);
         $version = preg_replace('/(\d)pr(\d?)/', '$1a$2', $version);
         return version_compare($version, strtolower(self::VERSION));
-    }    
+    }
 }
