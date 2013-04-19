@@ -155,7 +155,7 @@ final class Ncstate_Brand_Bar
      */
     public function getIframeHtml()
     {
-        return '<iframe name="' . $this->_options['iframeId'] . '" id="' 
+        return '<iframe 'title="NC State University Navigation Bar" name="' . $this->_options['iframeId'] . '" id="' 
              . $this->_options['iframeId'] . '" frameborder="0" src="' . $this->getIframeUrl() . '" scrolling="no">'
              . $this->_options['noIframePrompt']
              . '</iframe>';
