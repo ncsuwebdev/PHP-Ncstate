@@ -183,7 +183,7 @@ final class Ncstate_Brand_Bar
         }
         
         return $baseUrl . '?color=' . urlencode($this->_options['color']) 
-             . '&inurl=' . urlencode($this->_options['siteUrl']) . '&center=' 
+             . '&amp;inurl=' . urlencode($this->_options['siteUrl']) . '&amp;center=' 
              . urlencode((($this->_options['centered']) ? 'yes' : 'no'));
     }
 }
