@@ -221,7 +221,7 @@ class Ncstate_Service_Remedy
     }
 
     /**
-     * Retrieve call and related customer data for the specified call-id.
+     * Retrieve attachment data for the specified attachment entryId.
      *
      * @param string $entryId
      */
