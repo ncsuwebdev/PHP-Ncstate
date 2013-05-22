@@ -641,6 +641,23 @@ class Ncstate_Service_Remedy
         return $result;
     }
 
+    /**
+     * Retrieve a specific call from the calls_cust form using the specified call-id.
+     *
+     * @param int $callId
+     */
+    public function callCustGet($callId)
+    {
+        $args = array(
+            'call_id' => str_pad($callId, 8, '0', STR_PAD_LEFT),
+        );
+
+        $result = $this->_request('calls-cust', 'get-entry', $args);
+
+        $result->{'problem_text'} = $this->_parseDigest($result->{'problem_text'});
+
+        return $result;
+    }
 
     /**
      * Retrieve a list of the keywords associated with the specified solution.
