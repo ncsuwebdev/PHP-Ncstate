@@ -221,7 +221,7 @@ class Ncstate_Service_Remedy
     }
 
     /**
-     * Retrieve call and related customer data for the specified call-id.
+     * Retrieve attachment data for the specified attachment entryId.
      *
      * @param string $entryId
      */
@@ -547,6 +547,38 @@ class Ncstate_Service_Remedy
             return $this->_request('solutions', 'get-listNoKWDS', $args);
         }
     }
+    
+    /**
+     * Retrieve solutions that match the specified qualification.
+     *
+     * Solutions are returned in descending order by wwwused.
+     * This can be used to implement a "Top 10" solutins list.
+     * qualification can be used to customize the results.
+     * By default, will return the top 10 "Published" solutions in the system, regardless of workgroup
+     *
+     * @param string $qualification
+     * @param (null|int) $startRecord
+     * @param (null|int) $maxLimit
+     */
+    public function topSolutionList($qualification =  "'Status' <= \"Published\"", $startRecord = 0, $maxLimit = 10)
+    {
+        $args = array();
+
+        // echo "qual = $qualification\n";
+
+        if (!is_null($qualification)) {
+            $args['qualification'] = $qualification;
+        }
+
+        if (!is_null($startRecord)) {
+            $args['start_record'] = $startRecord;
+        }
+
+        if (!is_null($maxLimit)) {
+            $args['max_limit'] = $maxLimit;
+        }
+        return $this->_request('solutions-by-wwwused', 'get-list', $args);
+    }
 
     /**
      * Retrieve list of Survey entries matching the specified qualification.
@@ -609,6 +641,23 @@ class Ncstate_Service_Remedy
         return $result;
     }
 
+    /**
+     * Retrieve a specific call from the calls_cust form using the specified call-id.
+     *
+     * @param int $callId
+     */
+    public function callCustGet($callId)
+    {
+        $args = array(
+            'call_id' => str_pad($callId, 8, '0', STR_PAD_LEFT),
+        );
+
+        $result = $this->_request('calls-cust', 'get-entry', $args);
+
+        $result->{'problem_text'} = $this->_parseDigest($result->{'problem_text'});
+
+        return $result;
+    }
 
     /**
      * Retrieve a list of the keywords associated with the specified solution.
