@@ -25,7 +25,7 @@ class Ncstate_Service_Dining
      * URL to the public service to generate the images
      * @var string
      */
-    const BASE_URL = 'http://webapps.ncsu.edu/dining/';
+    const BASE_URL = 'http://www.ncsudining.com/diningapi/';
 
     /**
      * The API version to use.  It uses Version 2.0 by default
