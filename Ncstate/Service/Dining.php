@@ -312,8 +312,10 @@ class Ncstate_Service_Dining
 
         // The response will always have a wrapper element that is the version of the API we're using.
         // We don't care about that, so we'll strip it out
-        $this->_lastParsedResponse = array_pop($this->_lastParsedResponse);
-
+        if ($this->_lastParsedResponse != NULL) {
+            $this->_lastParsedResponse = array_pop($this->_lastParsedResponse);
+        }
+        
         // if it was xml, we'll remove the attributes that were attached to the
         // root element as they were meaningless
         if ($this->_format == 'xml') {
