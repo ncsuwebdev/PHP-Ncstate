@@ -312,6 +312,7 @@ class Ncstate_Service_Dining
 
         // The response will always have a wrapper element that is the version of the API we're using.
         // We don't care about that, so we'll strip it out
+        //Check that _lastParsedResponse is not null first or a cron error will be thrown
         if ($this->_lastParsedResponse != NULL) {
             $this->_lastParsedResponse = array_pop($this->_lastParsedResponse);
         }
