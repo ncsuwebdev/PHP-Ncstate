@@ -24,7 +24,7 @@ class Ncstate_Service_Ouc
      * URL to the public service
      * @var string
      */
-    const BASE_URL = 'http://webapps.ncsu.edu/ouc/';
+    const BASE_URL = 'https://webapps.ncsu.edu/ouc/';
 
     /**
      * Default response format
